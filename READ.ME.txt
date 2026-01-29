@@ -1,0 +1,130 @@
+PortSure - Portfolio Risk Analysis & Investment Compliance System
+=========  =======================================================
+
+PortSure is a full-stack web application designed to manage the lifecycle of investment portfolios. It separates the roles of those who request investments (Investors) from those who authorize them (Asset Managers), ensuring strict compliance with financial limits and asset allocation rules.
+
+---------------------
+🚀 Project Overview
+---------------------
+* Investors can sign up and request to create new investment portfolios.
+
+* The System automatically validates that they have enough funds and that their asset mix is mathematically correct (100%).
+
+* Asset Managers review these requests. They act as the "Human in the Loop" to Approve or Reject the assets.
+
+-------------------
+🛠️ Technology Stack
+-------------------
+Frontend: React.js (User Interface & Dashboards)
+
+Backend: Java Spring Boot (Business Logic & APIs)
+
+Database: MySQL (Persistent Data Storage)
+
+Testing: Postman (API Verification)
+
+------------------------
+🔄 End-to-End User Flow
+------------------------
+
+-> Registration & Security
+   =======================
+
+* Investors: Anyone can sign up as an Investor. The system automatically assigns them a starting Total Balance of    ₹100,000.
+
+	ex:- ID Generation: INV-1724...
+
+* Staff (Managers/Compliance): Registration is restricted. Users must enter a specific Security Key (PORTSURE) to create a Manager account.
+
+	ex:-ID Generation: MGR-1724... or CMP-1724...
+
+
+-> The Investor Workflow
+   =====================
+* Login: The user logs in with their credentials. The system directs them to the Investor Dashboard.
+
+* Dashboard View: They can see their Available Balance and a list of existing portfolios.
+
+* Create Portfolio:
+
+	-> The investor enters a Name (e.g., "Retirement Fund") and an Amount (e.g., ₹25,000).
+
+	-> They define the Asset Allocation: Equities, Bonds, and Derivatives.
+
+* Automated Validation (The Backend Brain):
+
+	Rule 1: Equities + Bonds + Derivatives must equal exactly 100%.
+
+	Rule 2: Requested Amount + Currently Used Funds cannot exceed the Total Balance.
+
+* Submission: If valid, the portfolio is saved to the database with a status of PENDING.
+
+
+-> The Manager Workflow
+   ====================
+* Login: The Manager logs in and sees the Staff Dashboard.
+
+* Investor Directory: They see a list of all registered investors.
+
+* Review: By clicking on an investor, they can see all "Pending" portfolios.
+
+* Decision:
+
+	Approve: The status changes to APPROVED. The portfolio is now active.
+
+	Reject: The portfolio is deleted from the database. The funds are effectively "returned" to the investor's 		available balance.
+
+
+📂 Database Structure
+======================
+
+The backend uses 3 Tables to keep data organized and secure:
+
+* investors Table: Stores user profile and the critical total_balance.
+
+* staff Table: Stores Managers and Compliance officers separately, holding their security_key.
+
+* portfolios Table: Stores the investment data. It has a Foreign Key (investor_id) that links every dollar back to 	            the specific investor who owns it.
+
+
+⚙️ Setup & Run Instructions
+=============================
+
+1. Backend (Spring Boot)
+--------------------------
+-> Open the project in IntelliJ.
+
+-> Update application.properties with your MySQL password.
+
+-> Note: Server is configured to run on Port 8081.
+
+-> Run PortSureApplication.java.
+
+-> Verify connection: Console should say Started PortSureApplication.
+
+
+2. Frontend (React)
+--------------------
+-> Open the frontend folder in VS Code.
+
+-> Run npm install (if first time).
+
+-> Run npm start.
+
+-> Access the UI at http://localhost:3000.
+
+
+3. API Endpoints (For Testing)
+------------------------------
+
+------  --------                                ------------
+Method	Endpoint				                Description
+------  --------    				            ------------
+POST	/auth/register				            Register new user (Investor/Manager).
+POST	/auth/login				                Login user and get role details.
+POST	/portfolios/add?investorId={id}		    Create a pending portfolio.
+GET	    /portfolios/get?investorId={id}		    Get list of portfolios for one user.
+GET	    /investors/all				            Manager view of all investors.
+PUT	    /portfolios/approve/{id}		        Approve a portfolio.
+DELETE	/portfolios/reject/{id}		            Reject and delete a portfolio.
+
